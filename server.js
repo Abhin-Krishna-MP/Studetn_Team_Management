@@ -137,12 +137,15 @@ app.post('/api/seed', async (req, res) => {
 
     // Create task phases
     await TaskPhase.findOrCreate({
-      where: { batch_id: batch[0].batch_id, name: 'Assignment 1' },
+      where: { batch_id: batch[0].batch_id, title: 'Assignment 1' },
       defaults: {
         batch_id: batch[0].batch_id,
+        tutor_id: tutors[0][0].tutor_id,
+        title: 'Assignment 1',
         name: 'Assignment 1',
         description: 'Complete the first assignment',
-        due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        start_date: new Date(),
+        end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
       }
     });
 
