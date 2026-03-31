@@ -72,6 +72,25 @@ app.get('/health', async (req, res) => {
   }
 });
 
+// Initialize database - creates all tables if they don't exist
+app.post('/api/init', async (req, res) => {
+  try {
+    console.log('🔄 Initializing database schema...');
+    await sequelize.sync({ alter: false });
+    console.log('✅ Database schema initialized successfully!');
+    res.json({
+      success: true,
+      message: '✅ Database schema created successfully!'
+    });
+  } catch (error) {
+    console.error('❌ Init failed:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // Seed endpoint - populate test data
 app.post('/api/seed', async (req, res) => {
   try {
