@@ -72,6 +72,126 @@ app.get('/health', async (req, res) => {
   }
 });
 
+// Seed endpoint - populate test data
+app.post('/api/seed', async (req, res) => {
+  try {
+    const { Tutor, Batch, Student, Team, TeamMember, TaskPhase } = require('./models');
+    const bcrypt = require('bcryptjs');
+
+    console.log('🌱 Seeding database...');
+
+    // Find or create tutors
+    const tutors = await Promise.all([
+      Tutor.findOrCreate({
+        where: { email: 'john.smith@university.edu' },
+        defaults: {
+          name: 'John Smith',
+          email: 'john.smith@university.edu',
+          department: 'Computer Science',
+          password: await bcrypt.hash('password123', 10)
+        }
+      }),
+      Tutor.findOrCreate({
+        where: { email: 'sarah.johnson@university.edu' },
+        defaults: {
+          name: 'Dr. Sarah Johnson',
+          email: 'sarah.johnson@university.edu',
+          department: 'Computer Science',
+          password: await bcrypt.hash('password123', 10)
+        }
+      })
+    ]);
+
+    // Find or create batch
+    const batch = await Batch.findOrCreate({
+      where: { year: 2024, department: 'Computer Science' },
+      defaults: {
+        year: 2024,
+        department: 'Computer Science',
+        branch: 'A',
+        section: 'I'
+      }
+    });
+
+    // Find or create students
+    const students = await Promise.all([
+      Student.findOrCreate({
+        where: { email: 'alice@university.edu' },
+        defaults: {
+          name: 'Alice Johnson',
+          email: 'alice@university.edu',
+          batch_id: batch[0].batch_id,
+          password: await bcrypt.hash('password123', 10)
+        }
+      }),
+      Student.findOrCreate({
+        where: { email: 'bob@university.edu' },
+        defaults: {
+          name: 'Bob Smith',
+          email: 'bob@university.edu',
+          batch_id: batch[0].batch_id,
+          password: await bcrypt.hash('password123', 10)
+        }
+      })
+    ]);
+
+    // Create task phases
+    await TaskPhase.findOrCreate({
+      where: { batch_id: batch[0].batch_id, name: 'Assignment 1' },
+      defaults: {
+        batch_id: batch[0].batch_id,
+        name: 'Assignment 1',
+        description: 'Complete the first assignment',
+        due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      }
+    });
+
+    // Create team and assign members
+    const team = await Team.findOrCreate({
+      where: { batch_id: batch[0].batch_id, name: 'Team 1' },
+      defaults: {
+        batch_id: batch[0].batch_id,
+        name: 'Team 1'
+      }
+    });
+
+    await TeamMember.findOrCreate({
+      where: { team_id: team[0].team_id, student_id: students[0][0].student_id },
+      defaults: {
+        team_id: team[0].team_id,
+        student_id: students[0][0].student_id,
+        role: 'member'
+      }
+    });
+
+    await TeamMember.findOrCreate({
+      where: { team_id: team[0].team_id, student_id: students[1][0].student_id },
+      defaults: {
+        team_id: team[0].team_id,
+        student_id: students[1][0].student_id,
+        role: 'member'
+      }
+    });
+
+    res.json({
+      success: true,
+      message: '✨ Database seeded successfully!',
+      data: {
+        tutors: tutors.length,
+        batches: 1,
+        students: students.length,
+        teams: 1
+      }
+    });
+  } catch (error) {
+    console.error('❌ Seed error:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // Import routes
 const authRoutes = require('./routes/auth');
 const tutorRoutes = require('./routes/tutor');

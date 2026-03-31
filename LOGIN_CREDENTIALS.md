@@ -7,11 +7,6 @@
 - **Password**: `password123`
 - **Role**: Student
 
-### CSV Imported Students
-- **Email**: Use the email from the uploaded CSV file
-- **Password**: `password123` (default for all CSV imports)
-- **Role**: Student
-
 ### Tutor Account  
 - **Email**: `john.smith@university.edu`
 - **Password**: `password123`
