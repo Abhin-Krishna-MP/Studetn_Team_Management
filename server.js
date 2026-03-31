@@ -14,6 +14,7 @@ const rateLimit = require('express-rate-limit');
 const allowedOrigins = [
   'http://localhost:5173',
   'https://studetn-team-management.vercel.app',
+  'https://studetn-team-management-gdsmkk4i1-abhin-krishna-mps-projects.vercel.app',
   process.env.CORS_ORIGIN
 ].filter(Boolean);
 
