@@ -91,7 +91,18 @@ app.post('/api/init', async (req, res) => {
   }
 });
 
-// Seed endpoint - populate test data
+// Import routes
+const authRoutes = require('./routes/auth');
+const tutorRoutes = require('./routes/tutor');
+const studentRoutes = require('./routes/students');
+const draftRoutes = require('./routes/drafts');
+const submissionRoutes = require('./routes/submissions');
+const { authenticate } = require('./middleware/auth');
+
+// Public routes
+app.use('/api/auth', authRoutes);
+
+// Seed endpoint - populate test data (PUBLIC)
 app.post('/api/seed', async (req, res) => {
   try {
     const { Tutor, Batch, Student, Team, TeamMember, TaskPhase } = require('./models');
@@ -213,17 +224,6 @@ app.post('/api/seed', async (req, res) => {
     });
   }
 });
-
-// Import routes
-const authRoutes = require('./routes/auth');
-const tutorRoutes = require('./routes/tutor');
-const studentRoutes = require('./routes/students');
-const draftRoutes = require('./routes/drafts');
-const submissionRoutes = require('./routes/submissions');
-const { authenticate } = require('./middleware/auth');
-
-// Public routes
-app.use('/api/auth', authRoutes);
 
 // Protected routes
 app.use('/api/tutor', tutorRoutes);
