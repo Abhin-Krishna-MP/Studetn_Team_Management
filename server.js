@@ -76,7 +76,8 @@ app.get('/health', async (req, res) => {
 app.post('/api/init', async (req, res) => {
   try {
     console.log('🔄 Initializing database schema...');
-    await sequelize.sync({ alter: false });
+    // Use force: true to drop and recreate all tables
+    await sequelize.sync({ force: true });
     console.log('✅ Database schema initialized successfully!');
     res.json({
       success: true,
