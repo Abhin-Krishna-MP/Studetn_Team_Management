@@ -7,16 +7,16 @@ const Team = sequelize.define('Team', {
     primaryKey: true,
     autoIncrement: true
   },
-  team_name: {
+  name: {
     type: DataTypes.STRING(100),
     allowNull: false
   },
-  tutor_id: {
+  batch_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'Tutor',
-      key: 'tutor_id'
+      model: 'Batch',
+      key: 'batch_id'
     }
   }
 }, {
